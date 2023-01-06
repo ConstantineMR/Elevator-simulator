@@ -7,6 +7,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 
@@ -83,10 +84,10 @@ public class ElevatorGUI extends Application {
             vBox[1].getChildren().add(exit);
             hBox.getChildren().addAll(vBox);
             MotherBox.getChildren().addAll(crFloor, hBox);
-            AnchorPane.setBottomAnchor(MotherBox, 60.0);
+            AnchorPane.setBottomAnchor(MotherBox, 70.0);
             AnchorPane.setRightAnchor(MotherBox, 60.0);
             AnchorPane.setLeftAnchor(MotherBox, 60.0);
-            AnchorPane.setTopAnchor(MotherBox, 60.0);
+            AnchorPane.setTopAnchor(MotherBox, 70.0);
             root.getChildren().add(MotherBox);
             root.setStyle("-fx-background-color: #464646;");
 
@@ -131,9 +132,9 @@ public class ElevatorGUI extends Application {
             Scene scene = new Scene(root);
             scene.setFill(Color.BLACK);
             this.setMinWidth(340);
-            this.setMinHeight(680);
+            this.setMinHeight(700);
             this.setMaxWidth(340);
-            this.setMaxHeight(680);
+            this.setMaxHeight(700);
             this.setResizable(false);
             this.setScene(scene);
             this.setTitle("Inside The Elevator");
@@ -160,15 +161,20 @@ public class ElevatorGUI extends Application {
                 floors[i].setMinSize(150, 40);
                 floors[i].setMaxSize(150, 40);
             }
+            //Earth
+            Rectangle earth = new Rectangle(340,20);
+            earth.setFill(Color.SADDLEBROWN);
             //------------------------------------------------------------------------------------------------------------//
             //DISPLAY LAYERS
             for (int i = 14; i >= 0; i--) {
                 vBox.getChildren().add(floors[i]);
             }
             AnchorPane.setLeftAnchor(vBox,80.0);
-            AnchorPane.setBottomAnchor(vBox,0.0);
-            root.getChildren().add(vBox);
-            root.setStyle("-fx-background-color: #464646;");
+            AnchorPane.setBottomAnchor(vBox,20.0);
+            AnchorPane.setLeftAnchor(earth,0.0);
+            AnchorPane.setBottomAnchor(earth,0.0);
+            root.getChildren().addAll(vBox,earth);
+            root.setStyle("-fx-background-color: #87CEEB;");
             //------------------------------------------------------------------------------------------------------------//
             //FUNCTION
             for (int i = 0; i < 15; i++) {
@@ -195,9 +201,9 @@ public class ElevatorGUI extends Application {
             Scene scene = new Scene(root);
             scene.setFill(Color.BLACK);
             this.setMinWidth(340);
-            this.setMinHeight(680);
+            this.setMinHeight(700);
             this.setMaxWidth(340);
-            this.setMaxHeight(680);
+            this.setMaxHeight(700);
             this.setResizable(false);
             this.setScene(scene);
             this.setTitle("Outside The Elevator");
