@@ -3,23 +3,24 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 
-public class ElevatorGUI extends Application {
-    static boolean[] floorReq = new boolean[15];
-    static int[] atFloor = new int[15];
+public class ElevatorGUI extends Application implements Runnable {
+    static Data data;
 
-    public static void main(String[] args) {
-        for (int i = 0; i < 15; i++) {
-            floorReq[i] = false;
-            atFloor[i] = 0;
-        }
+    @Override
+    public void run() {
         launch();
     }
 
@@ -29,7 +30,6 @@ public class ElevatorGUI extends Application {
         insideElevator.start();
         OutsideElevator outsideElevator = new OutsideElevator();
         outsideElevator.start();
-        Elevator elevator = new Elevator();
     }
 
     class InsideElevator extends Stage {
@@ -109,10 +109,9 @@ public class ElevatorGUI extends Application {
                 });
                 buttons[i].setOnMouseClicked(e -> {
                     /////CRITICAL ZONE\\\\\
-                    floorReq[finalI] = true;
+                    data.floorReq[finalI] = true;
                 });
             }
-
             exit.setOnMouseEntered(e -> {
                 exit.setStyle("-fx-background-color: #EE0101; " +
                         "-fx-border-color: #000000; " +
@@ -146,35 +145,39 @@ public class ElevatorGUI extends Application {
         public void start() {
             //------------------------------------------------------------------------------------------------------------//
             //LAYOUTS
-            AnchorPane root = new AnchorPane();
+            StackPane root = new StackPane();
+            AnchorPane anchorPane = new AnchorPane();
             VBox vBox = new VBox(0);
             //------------------------------------------------------------------------------------------------------------//
             //OBJECTS
+            //Background Image
+            FileInputStream inputstream = null;
+            try {
+                inputstream = new FileInputStream("JC.jpg");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            Image image = new Image(inputstream);
+            ImageView imageView = new ImageView(image);
             //Floor Button
             Button[] floors = new Button[15];
             for (int i = 0; i < 15; i++) {
                 floors[i] = new Button("Floor " + (i + 1));
                 floors[i].setStyle( "-fx-background-color: #333333; " +
-                                    "-fx-border-color: #000000; " +
-                                    "-fx-text-fill: #FFFFFF; " +
-                                    "-fx-font-size: 16px;");
-                floors[i].setMinSize(150, 40);
-                floors[i].setMaxSize(150, 40);
+                        "-fx-border-color: #000000; " +
+                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-font-size: 12px;");
+                floors[i].setMinSize(105, 30);
+                floors[i].setMaxSize(105, 30);
             }
-            //Earth
-            Rectangle earth = new Rectangle(340,20);
-            earth.setFill(Color.SADDLEBROWN);
             //------------------------------------------------------------------------------------------------------------//
             //DISPLAY LAYERS
             for (int i = 14; i >= 0; i--) {
                 vBox.getChildren().add(floors[i]);
             }
-            AnchorPane.setLeftAnchor(vBox,80.0);
-            AnchorPane.setBottomAnchor(vBox,20.0);
-            AnchorPane.setLeftAnchor(earth,0.0);
-            AnchorPane.setBottomAnchor(earth,0.0);
-            root.getChildren().addAll(vBox,earth);
-            root.setStyle("-fx-background-color: #87CEEB;");
+            AnchorPane.setLeftAnchor(vBox,205.0);
+            AnchorPane.setBottomAnchor(vBox,0.0);
+            anchorPane.getChildren().addAll(vBox);
             //------------------------------------------------------------------------------------------------------------//
             //FUNCTION
             for (int i = 0; i < 15; i++) {
@@ -193,16 +196,18 @@ public class ElevatorGUI extends Application {
                 });
                 floors[i].setOnMouseClicked(e -> {
                     /////CRITICAL ZONE\\\\\
-                    atFloor[finalI]++;
+                    data.atFloor[finalI]++;
                 });
             }
             //------------------------------------------------------------------------------------------------------------//
             //FINAL ADJUSTMENT
+            root.getChildren().add(imageView);
+            root.getChildren().add(anchorPane);
             Scene scene = new Scene(root);
             scene.setFill(Color.BLACK);
-            this.setMinWidth(340);
+            this.setMinWidth(515);
             this.setMinHeight(700);
-            this.setMaxWidth(340);
+            this.setMaxWidth(515);
             this.setMaxHeight(700);
             this.setResizable(false);
             this.setScene(scene);
