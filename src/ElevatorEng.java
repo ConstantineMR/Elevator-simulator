@@ -5,7 +5,7 @@ public class ElevatorEng implements Runnable{
     public void run() {
         while (true){
             try {
-                Thread.sleep(5000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -16,7 +16,6 @@ public class ElevatorEng implements Runnable{
             else if (data.direction == Data.Direction.D)
                 if ( data.level > 1 )
                     data.level--;
-            System.out.println("data.level = " + data.level);
             ElevatorGUI.update();
         }
     }

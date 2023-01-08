@@ -109,8 +109,7 @@ public class ElevatorGUI extends Application implements Runnable {
                             "-fx-font-size: 16px;");
                 });
                 buttons[i].setOnMouseClicked(e -> {
-                    /////CRITICAL ZONE\\\\\
-                    data.internalReq[finalI] = true;
+                    data.age[finalI] = (data.age[finalI] < 0)? 99 : data.age[finalI] - 1;
                 });
             }
             exit.setOnMouseEntered(e -> {
@@ -195,8 +194,7 @@ public class ElevatorGUI extends Application implements Runnable {
                             "-fx-font-size: 16px;");
                 });
                 floors[i].setOnMouseClicked(e -> {
-                    /////CRITICAL ZONE\\\\\
-                    data.externalReq[finalI] = true;
+                    data.age[finalI] = (data.age[finalI] < 0)? 99 : data.age[finalI] - 1;
                 });
             }
             //------------------------------------------------------------------------------------------------------------//
