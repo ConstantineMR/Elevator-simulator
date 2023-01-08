@@ -1,12 +1,19 @@
 public class Data {
-    public boolean[] floorReq = new boolean[15];
-    public int[] atFloor = new int[15];
+    public boolean[] internalReq = new boolean[15];
+    public boolean[] externalReq = new boolean[15];
+    //public boolean[] age = new boolean[15];
+    public int level;
+    Direction direction;
+
+    public enum Direction {U, D, S}
 
     Data(){
         for (int i = 0; i < 15; i++) {
-            floorReq[i] = false;
-            atFloor[i] = 0;
+            internalReq[i] = false;
+            externalReq[i] = false;
         }
+        level = 1;
+        direction = Direction.S;
     }
 
 }

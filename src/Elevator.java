@@ -6,10 +6,14 @@ public class Elevator{
         ElevatorGUI.data = data;
         ElevatorOS elevatorOS = new ElevatorOS();
         ElevatorOS.data = data;
+        ElevatorEng elevatorEng = new ElevatorEng();
+        ElevatorEng.data = data;
         Thread threadGUI = new Thread(elevatorGUI);
         Thread threadOS = new Thread(elevatorOS);
+        Thread threadEng = new Thread(elevatorEng);
         threadGUI.start();
         threadOS.start();
+        threadEng.start();
 
     }
 }

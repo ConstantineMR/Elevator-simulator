@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -10,7 +11,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 
 public class ElevatorGUI extends Application implements Runnable {
     static Data data;
+    static Label crFloor;
 
     @Override
     public void run() {
@@ -46,7 +47,7 @@ public class ElevatorGUI extends Application implements Runnable {
             //------------------------------------------------------------------------------------------------------------//
             //OBJECTS
             //Floor Current Level
-            Label crFloor = new Label("1");
+            crFloor = new Label(data.level + "");
             crFloor.setStyle("-fx-control-inner-background: #333333; " +
                     "-fx-background-color: #333333; " +
                     "-fx-border-color: #000000; " +
@@ -109,7 +110,7 @@ public class ElevatorGUI extends Application implements Runnable {
                 });
                 buttons[i].setOnMouseClicked(e -> {
                     /////CRITICAL ZONE\\\\\
-                    data.floorReq[finalI] = true;
+                    data.internalReq[finalI] = true;
                 });
             }
             exit.setOnMouseEntered(e -> {
@@ -125,7 +126,6 @@ public class ElevatorGUI extends Application implements Runnable {
                         "-fx-font-size: 16px;");
             });
             exit.setOnMouseClicked(e -> this.close());
-
             //------------------------------------------------------------------------------------------------------------//
             //FINAL ADJUSTMENT
             Scene scene = new Scene(root);
@@ -196,7 +196,7 @@ public class ElevatorGUI extends Application implements Runnable {
                 });
                 floors[i].setOnMouseClicked(e -> {
                     /////CRITICAL ZONE\\\\\
-                    data.atFloor[finalI]++;
+                    data.externalReq[finalI] = true;
                 });
             }
             //------------------------------------------------------------------------------------------------------------//
@@ -215,4 +215,14 @@ public class ElevatorGUI extends Application implements Runnable {
             this.show();
         }
     }
+
+    public static void update(){
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                crFloor.setText(data.level + "");
+            }
+        });
+    }
+
 }
