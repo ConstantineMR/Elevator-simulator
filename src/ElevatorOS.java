@@ -3,21 +3,31 @@ public class ElevatorOS implements Runnable{
 
     @Override
     public void run() {
-        while (true){
+        int ageing = 1;
+        while (true) {
             try {
+                data.semAge.acquire();
                 data.age[data.level - 1] = -1;
+                if ( ageing % 5 == 0 ) {
+                    for (int i = 0; i < 15; i++) {
+                        if (data.age[i] > 0) {
+                            data.age[i]--;
+                            ageing++;
+                        }
+                    }
+                }
+                else
+                    ageing++;
+                data.semAge.release();
+
                 int min = Integer.MAX_VALUE, minIndex = -1;
-                System.out.println("level = " + data.level);
                 for (int i = 0; i < 15; i++) {
                     int h = this.heuristic(i);
-                    System.out.print("\t[" + i + "] = " + data.age[i]);
                     if ( h > 0 && h < min ) {
                         minIndex = i;
                         min = h;
                     }
                 }
-                System.out.println("\nmin = " + min);
-                System.out.println("minIn = " + minIndex);
                 if (minIndex == -1)
                     data.direction = Data.Direction.S;
                 else if (minIndex + 1 > data.level)

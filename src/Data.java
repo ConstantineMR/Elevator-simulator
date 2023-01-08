@@ -1,5 +1,8 @@
+import java.util.concurrent.Semaphore;
+
 public class Data {
     public int[] age = new int[15];
+    public Semaphore semAge;
     public int level;
     Direction direction;
 
@@ -11,6 +14,7 @@ public class Data {
         }
         level = 1;
         direction = Direction.S;
+        semAge = new Semaphore(1);
     }
 
 }

@@ -19,6 +19,8 @@ import java.io.FileNotFoundException;
 public class ElevatorGUI extends Application implements Runnable {
     static Data data;
     static Label crFloor;
+    static Button[] floors;
+    static Button previous;
 
     @Override
     public void run() {
@@ -47,7 +49,7 @@ public class ElevatorGUI extends Application implements Runnable {
             //------------------------------------------------------------------------------------------------------------//
             //OBJECTS
             //Floor Current Level
-            crFloor = new Label(data.level + "");
+            crFloor = new Label("01");
             crFloor.setStyle("-fx-control-inner-background: #333333; " +
                     "-fx-background-color: #333333; " +
                     "-fx-border-color: #000000; " +
@@ -109,7 +111,13 @@ public class ElevatorGUI extends Application implements Runnable {
                             "-fx-font-size: 16px;");
                 });
                 buttons[i].setOnMouseClicked(e -> {
-                    data.age[finalI] = (data.age[finalI] < 0)? 99 : data.age[finalI] - 1;
+                    try {
+                        data.semAge.acquire();
+                        data.age[finalI] = (data.age[finalI] < 0)? 99 : data.age[finalI] - 1;
+                        data.semAge.release();
+                    } catch (InterruptedException interruptedException) {
+                        interruptedException.printStackTrace();
+                    }
                 });
             }
             exit.setOnMouseEntered(e -> {
@@ -136,6 +144,8 @@ public class ElevatorGUI extends Application implements Runnable {
             this.setResizable(false);
             this.setScene(scene);
             this.setTitle("Inside The Elevator");
+            this.setX(0);
+            this.setY(0);
             this.show();
         }
     }
@@ -159,7 +169,7 @@ public class ElevatorGUI extends Application implements Runnable {
             Image image = new Image(inputstream);
             ImageView imageView = new ImageView(image);
             //Floor Button
-            Button[] floors = new Button[15];
+            floors = new Button[15];
             for (int i = 0; i < 15; i++) {
                 floors[i] = new Button("Floor " + (i + 1));
                 floors[i].setStyle( "-fx-background-color: #333333; " +
@@ -185,16 +195,22 @@ public class ElevatorGUI extends Application implements Runnable {
                     floors[finalI].setStyle("-fx-background-color: #232323; " +
                             "-fx-border-color: #000000; " +
                             "-fx-text-fill: #FFFFFF; " +
-                            "-fx-font-size: 16px;");
+                            "-fx-font-size: 12px;");
                 });
                 floors[i].setOnMouseExited(e -> {
                     floors[finalI].setStyle("-fx-background-color: #333333; " +
                             "-fx-border-color: #000000; " +
                             "-fx-text-fill: #FFFFFF; " +
-                            "-fx-font-size: 16px;");
+                            "-fx-font-size: 12px;");
                 });
                 floors[i].setOnMouseClicked(e -> {
-                    data.age[finalI] = (data.age[finalI] < 0)? 99 : data.age[finalI] - 1;
+                    try {
+                        data.semAge.acquire();
+                        data.age[finalI] = (data.age[finalI] < 0)? 99 : data.age[finalI] - 1;
+                        data.semAge.release();
+                    } catch (InterruptedException interruptedException) {
+                        interruptedException.printStackTrace();
+                    }
                 });
             }
             //------------------------------------------------------------------------------------------------------------//
@@ -218,7 +234,42 @@ public class ElevatorGUI extends Application implements Runnable {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                crFloor.setText(data.level + "");
+                String str = String.valueOf((data.level > 9)? data.level:("0" + data.level));
+                if (data.direction == Data.Direction.D) {
+                    str += "⇩";
+                    crFloor.setStyle("-fx-control-inner-background: #333333; " +
+                            "-fx-background-color: #333333; " +
+                            "-fx-border-color: #000000; " +
+                            "-fx-text-fill: #FF0000; " +
+                            "-fx-font-size: 55px;");
+                }
+                else if (data.direction == Data.Direction.U){
+                    str += "⇧";
+                    crFloor.setStyle("-fx-control-inner-background: #333333; " +
+                            "-fx-background-color: #333333; " +
+                            "-fx-border-color: #000000; " +
+                            "-fx-text-fill: #00FF00; " +
+                            "-fx-font-size: 55px;");
+                }
+                else {
+                    crFloor.setStyle("-fx-control-inner-background: #333333; " +
+                            "-fx-background-color: #333333; " +
+                            "-fx-border-color: #000000; " +
+                            "-fx-text-fill: #FFFFFF; " +
+                            "-fx-font-size: 55px;");
+                }
+                crFloor.setText(str);
+                if (previous != null){
+                    previous.setStyle( "-fx-background-color: #333333; " +
+                            "-fx-border-color: #000000; " +
+                            "-fx-text-fill: #FFFFFF; " +
+                            "-fx-font-size: 12px;");
+                }
+                floors[data.level - 1].setStyle( "-fx-background-color: #EDA800; " +
+                        "-fx-border-color: #000000; " +
+                        "-fx-text-fill: #000000; " +
+                        "-fx-font-size: 12px;");
+                previous = floors[data.level - 1];
             }
         });
     }
