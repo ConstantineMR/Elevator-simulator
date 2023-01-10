@@ -3,56 +3,87 @@ public class ElevatorOS implements Runnable{
 
     @Override
     public void run() {
-        int ageing = 1;
+        int[] ageing = new int[3];
+        ageing[0] = 1;
+        ageing[1] = 1;
+        ageing[2] = 1;
         while (true) {
             try {
-                data.semAge.acquire();
-                data.age[data.level - 1] = -1;
-                if ( ageing % 5 == 0 ) {
+                for (int k = 0; k < 3; k++) {
+                    data.semAge[k].acquire();
+                    data.age[k][data.level[k] - 1] = -1;
+                    if (ageing[k] % 5 == 0) {
+                        for (int i = 0; i < 15; i++) {
+                            if (data.age[k][i] > 0) {
+                                data.age[k][i]--;
+                                ageing[k]++;
+                            }
+                        }
+                    } else
+                        ageing[k]++;
+                    data.semAge[k].release();
+
+                    int min = Integer.MAX_VALUE, minIndex = -1;
                     for (int i = 0; i < 15; i++) {
-                        if (data.age[i] > 0) {
-                            data.age[i]--;
-                            ageing++;
+                        int h = heuristic(i, k);
+                        if (h > 0 && h < min) {
+                            minIndex = i;
+                            min = h;
                         }
                     }
+                    if (minIndex == -1)
+                        data.direction[k] = Data.Direction.S;
+                    else if (minIndex + 1 > data.level[k])
+                        data.direction[k] = Data.Direction.U;
+                    else
+                        data.direction[k] = Data.Direction.D;
                 }
-                else
-                    ageing++;
-                data.semAge.release();
-
-                int min = Integer.MAX_VALUE, minIndex = -1;
-                for (int i = 0; i < 15; i++) {
-                    int h = this.heuristic(i);
-                    if ( h > 0 && h < min ) {
-                        minIndex = i;
-                        min = h;
-                    }
-                }
-                if (minIndex == -1)
-                    data.direction = Data.Direction.S;
-                else if (minIndex + 1 > data.level)
-                    data.direction = Data.Direction.U;
-                else
-                    data.direction = Data.Direction.D;
-                Thread.sleep(3000);
+                Thread.sleep(5000);
             } catch (Exception e){
                 System.out.println("EXCEPTION");
             }
         }
     }
 
-    public int heuristic( int index ){
-        if ( data.age[index] < 0 )
+    public static int heuristic( int index, int k ){
+        if ( data.age[k][index] < 0 )
             return -1;
         int value = 0;
-        value += data.age[index] * 100;
+        value += data.age[k][index] * 100;
         index++;
-        if (data.direction == Data.Direction.D && data.level < index)
+        if (data.direction[k] == Data.Direction.D && data.level[k] < index)
                     value += 10000;
-        if (data.direction == Data.Direction.U && data.level > index)
+        if (data.direction[k] == Data.Direction.U && data.level[k] > index)
                     value += 10000;
-        value += Math.abs(data.level - index);
+        value += Math.abs(data.level[k] - index);
         return value;
+    }
+
+    public static int BestElevator( int index ){
+        for (int i = 0; i < 3; i++) {
+            if ( data.level[i] == index + 1 && data.direction[i] == Data.Direction.S)
+                return i;
+        }
+        int min = Integer.MAX_VALUE, minIndex = -1;
+        for (int i = 0; i < 3; i++) {
+            int h = 0;
+            if (data.direction[i] == Data.Direction.D)
+                if ( data.level[i] < index + 1 )
+                    h += 100;
+                else
+                    h -= 100;
+            if (data.direction[i] == Data.Direction.U)
+                if ( data.level[i] > index + 1 )
+                    h += 100;
+                else
+                    h -= 100;
+            h += Math.abs(data.level[i] - ( index + 1 ) );
+            if (h < min) {
+                minIndex = i;
+                min = h;
+            }
+        }
+        return minIndex;
     }
 
 }

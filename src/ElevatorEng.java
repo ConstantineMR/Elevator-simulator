@@ -5,15 +5,17 @@ public class ElevatorEng implements Runnable{
     public void run() {
         while (true){
             try {
-                Thread.sleep(3000);
-                if (data.direction == Data.Direction.U) {
-                    if (data.level < 15) {
-                        data.level++;
+                Thread.sleep(5000);
+                for (int i = 0; i < 3; i++) {
+                    if (data.direction[i] == Data.Direction.U) {
+                        if (data.level[i] < 15) {
+                            data.level[i]++;
+                        }
                     }
-                }
-                else if (data.direction == Data.Direction.D) {
-                    if (data.level > 1) {
-                        data.level--;
+                    else if (data.direction[i] == Data.Direction.D) {
+                        if (data.level[i] > 1) {
+                            data.level[i]--;
+                        }
                     }
                 }
                 ElevatorGUI.update();
