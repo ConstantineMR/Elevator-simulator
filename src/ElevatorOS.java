@@ -3,24 +3,16 @@ public class ElevatorOS implements Runnable{
 
     @Override
     public void run() {
-        int[] ageing = new int[3];
-        ageing[0] = 1;
-        ageing[1] = 1;
-        ageing[2] = 1;
         while (true) {
             try {
                 for (int k = 0; k < 3; k++) {
                     data.semAge[k].acquire();
                     data.age[k][data.level[k] - 1] = -1;
-                    if (ageing[k] % 5 == 0) {
-                        for (int i = 0; i < 15; i++) {
-                            if (data.age[k][i] > 0) {
-                                data.age[k][i]--;
-                                ageing[k]++;
-                            }
+                    for (int i = 0; i < 15; i++) {
+                        if (data.age[k][i] > 0) {
+                            data.age[k][i]--;
                         }
-                    } else
-                        ageing[k]++;
+                    }
                     data.semAge[k].release();
 
                     int min = Integer.MAX_VALUE, minIndex = -1;
@@ -38,7 +30,7 @@ public class ElevatorOS implements Runnable{
                     else
                         data.direction[k] = Data.Direction.D;
                 }
-                Thread.sleep(5000);
+                Thread.sleep(4000);
             } catch (Exception e){
                 System.out.println("EXCEPTION");
             }
@@ -52,9 +44,9 @@ public class ElevatorOS implements Runnable{
         value += data.age[k][index] * 100;
         index++;
         if (data.direction[k] == Data.Direction.D && data.level[k] < index)
-                    value += 10000;
+                    value += 5000;
         if (data.direction[k] == Data.Direction.U && data.level[k] > index)
-                    value += 10000;
+                    value += 5000;
         value += Math.abs(data.level[k] - index);
         return value;
     }
